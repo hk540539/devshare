@@ -1,3 +1,4 @@
 {
-    "mongoURI":"mongodb+srv://hemu123:hemu123@devshare-0u1bw.mongodb.net/test?retryWrites=true&w=majority"
+	"mongoURI": "mongodb+srv://hemu123:hemu123@devshare-0u1bw.mongodb.net/test?retryWrites=true&w=majority",
+	"JWTSecretKey": "hemu123"
 }

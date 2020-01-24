@@ -5,6 +5,9 @@ const { check, validationResult } = require('express-validator');
 const User = require('../../models/Users');
 const gravatar = require('gravatar');
 const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
+const config = require('config');
+
 //@route       POST api/users
 //@description Register User
 //@access      Public
@@ -52,7 +55,20 @@ router.post(
 			user.password = await bcrypt.hash(password, salt);
 
 			await user.save();
-			res.send('User registered');
+
+			// for every save entry in moongoose it ctreares id for it
+			const payload = {
+				user: {
+					id: user.id
+				}
+			};
+
+			jwt.sign(payload, config.get('JWTSecretKey'), { expiresIn: 36000 }, (err, token) => {
+				if (err) throw err;
+				res.json({ token });
+			});
+
+			//	res.send('User registered');
 		} catch (error) {
 			console.log(error.message);
 			res.status(500).send('Server error');
