@@ -1,4 +1,6 @@
 {
 	"mongoURI": "mongodb+srv://hemu123:hemu123@devshare-0u1bw.mongodb.net/test?retryWrites=true&w=majority",
-	"JWTSecretKey": "hemu123"
+	"JWTSecretKey": "hemu123",
+	"githubClientId": "cd8d423dc930319e5698",
+	"githubSecret": "30a39698f94458e6fad4da7b8e90a6a00bf562e5"
 }

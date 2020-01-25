@@ -2,18 +2,19 @@ const express = require('express');
 
 const router = express.Router();
 
-const auth = require('../../middlewear/auth');
+const auth = require('../../middleware/auth');
 const User = require('../../models/Users');
 const { check, validationResult } = require('express-validator');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const config = require('config');
 
+// header should be passed for auth middleware with token to get req.user.id
+
 //@route       GET api/auth
 //@description test route
 //@access      Private
 
-// header should be passed for auth middlewear to get req.user.id
 router.get('/', auth, async (req, res) => {
 	try {
 		const user = await User.findById(req.user.id).select('-password');
@@ -25,7 +26,7 @@ router.get('/', auth, async (req, res) => {
 });
 
 //@route       POST api/auth
-//@description Authniticate User and get token
+//@description login User and get token
 //@access      Public
 router.post(
 	'/',
@@ -47,7 +48,7 @@ router.post(
 			if (!user) {
 				return res.status(400).json({ erros: [ { msg: 'Invalid Credentials' } ] });
 			}
-
+			// here password is plain and user.password is encrypted password in db
 			const isMatch = await bcrypt.compare(password, user.password);
 
 			if (!isMatch) {
@@ -60,7 +61,7 @@ router.post(
 				}
 			};
 
-			jwt.sign(payload, config.get('JWTSecretKey'), { expiresIn: 36000 }, (err, token) => {
+			jwt.sign(payload, config.get('JWTSecretKey'), { expiresIn: 3600000 }, (err, token) => {
 				if (err) throw err;
 				res.json({ token });
 			});
@@ -72,5 +73,18 @@ router.post(
 		}
 	}
 );
+
+// @route    GET api/profile
+// @desc     Get all profiles
+// @access   Public
+router.get('/', async (req, res) => {
+	try {
+		const profiles = await Profile.find().populate('user', [ 'name', 'avatar' ]);
+		res.json(profiles);
+	} catch (err) {
+		console.error(err.message);
+		res.status(500).send('Server Error');
+	}
+});
 
 module.exports = router;
