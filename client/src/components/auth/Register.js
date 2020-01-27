@@ -15,7 +15,7 @@ const Register = () => {
 
 	const onSubmit = (e) => {
 		e.preventDefault();
-		if (password !== password2) console.log("password doesn't match");
+		if (password !== password2) console.log('password doesnt match');
 		console.log(formData);
 	};
 
