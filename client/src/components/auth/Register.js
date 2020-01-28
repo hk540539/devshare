@@ -1,6 +1,11 @@
 import React, { Fragment, useState } from 'react';
+import axios from 'axios';
+import { Link } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { setAlerts } from '../../redux';
 
 const Register = () => {
+	const dispatch = useDispatch();
 	const [ formData, setFormData ] = useState({
 		name: '',
 		email: '',
@@ -13,10 +18,29 @@ const Register = () => {
 		setFormData({ ...formData, [name]: value });
 	};
 
-	const onSubmit = (e) => {
+	const onSubmit = async (e) => {
 		e.preventDefault();
-		if (password !== password2) console.log('password doesnt match');
-		console.log(formData);
+		if (password !== password2) {
+			dispatch(setAlerts('Password do not match', 'danger'));
+		} else {
+			const newUser = {
+				name,
+				email,
+				password
+			};
+			try {
+				const config = {
+					headers: {
+						'Content-Type': 'application/json'
+					}
+				};
+				const body = JSON.stringify(newUser);
+				const res = await axios.post('/api/users', body, config);
+				console.log(res.data);
+			} catch (error) {
+				console.error(error.response.data);
+			}
+		}
 	};
 
 	return (
@@ -71,8 +95,9 @@ const Register = () => {
 				<input type="submit" className="btn btn-primary" value="Register" />
 			</form>
 			<p className="my-1">
-				Already have an account? <a href="login.html">Sign In</a>
+				Already have an account? <Link to="/login">Sign In</Link>
 			</p>
+			<button onClick={() => dispatch(setAlerts('password do not match', 'danger'))}>button</button>
 		</Fragment>
 	);
 };
